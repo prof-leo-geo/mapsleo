@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapas — Leonardo Gomes Dourado</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --text: #f2f2f2;
+      --muted: #8d8d8d;
+      --radius: 12px;
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 120px;
+    }
+
+    header {
+      padding: 40px 60px;
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 700;
+    }
+
+    p.lead {
+      margin-top: 10px;
+      font-size: 17px;
+      color: var(--muted);
+    }
+
+    nav {
+      margin-top: 30px;
+      display: flex;
+      gap: 30px;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 10px 18px;
+      border: 1px solid #1a1a1a;
+      border-radius: 8px;
+      background: #111111;
+      transition: 0.2s ease;
+      font-size: 15px;
+    }
+
+    nav a:hover { background: #1d1d1d; transform: translateY(-2px); }
+
+    /* GRID DE MAPAS */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 28px;
+      padding: 20px 60px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #111111;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid #1b1b1b;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .card:hover { transform: translateY(-5px); }
+
+    .thumb img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: 0.3s ease;
+      display: block;
+    }
+
+    .card:hover img { transform: scale(1.08); }
+
+    .meta {
+      padding: 12px 14px;
+    }
+
+    .title { font-weight: 600; margin-bottom: 6px; }
+
+    .desc { font-size: 13px; color: var(--muted); }
+
+
+    /* LIGHTBOX */
+    .lb {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      z-index: 100;
+    }
+
+    .lb.show { display: flex; }
+
+    .lb-content {
+      max-width: 1000px;
+      width: 100%;
+      background: #111111;
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid #222;
+    }
+
+    .lb img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      cursor: pointer;
+      color: var(--muted);
+      background: none;
+      border: none;
+    }
+
+    footer {
+      margin-top: 80px;
+      padding: 40px 60px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 32px; }
+      .thumb img { height: 180px; }
+      nav { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Galeria de Mapas</h1>
+    <p class="lead">Coleção de mapas criados por Leonardo Gomes Dourado</p>
+
+    <nav>
+      <a href="/inicial">Início</a>
+      <a href="/mapas">Mapas</a>
+      <a href="/contato">Contato</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="grid" id="gallery">
+
+      <!-- Exemplo de item — substitua pelos seus arquivos reais -->
+      <article class="card" data-title="Mapa 1" data-desc="Descrição breve do mapa 1">
+        <div class="thumb"><img src="images/mapa1.png" alt="Mapa 1"></div>
+        <div class="meta">
+          <h3 class="title">Mapa 1</h3>
+          <p class="desc">Clique para ampliar</p>
+        </div>
+      </article>
+
+      <article class="card" data-title="Mapa 2" data-desc="Descrição breve do mapa 2">
+        <div class="thumb"><img src="images/mapa2.png" alt="Mapa 2"></div>
+        <div class="meta">
+          <h3 class="title">Mapa 2</h3>
+          <p class="desc">Clique para ampliar</p>
+        </div>
+      </article>
+
+      <!-- Adicione mais mapas copiando a estrutura acima -->
+
+    </section>
+  </main>
+
+  <!-- LIGHTBOX -->
+  <div class="lb" id="lightbox">
+    <button class="close-btn" id="lb-close">×</button>
+    <div class="lb-content">
+      <img id="lb-img" src="" alt="">
+      <h2 id="lb-title"></h2>
+      <p id="lb-desc"></p>
+    </div>
+  </div>
+
+  <footer>© <span id="ano"></span> Leonardo Gomes Dourado</footer>
+
+
+  <script>
+    document.getElementById('Ano');
+    document.getElementById('ano').textContent = new Date().getFullYear();
+
+    const gallery = document.getElementById('gallery');
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    const lbTitle = document.getElementById('lb-title');
+    const lbDesc = document.getElementById('lb-desc');
+    const lbClose = document.getElementById('lb-close');
+
+    gallery.addEventListener('click', (e) => {
+      const card = e.target.closest('.card');
+      if (!card) return;
+
+      lbImg.src = card.querySelector('img').src;
+      lbTitle.textContent = card.dataset.title;
+      lbDesc.textContent = card.dataset.desc;
+
+      lb.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    });
+
+    lbClose.addEventListener('click', () => {
+      lb.classList.remove('show');
+      document.body.style.overflow = '';
+    });
+
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb) {
+        lb.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  </script>
+
+</body>
+</html>
